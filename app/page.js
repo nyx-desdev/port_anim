@@ -1,101 +1,115 @@
-import Image from "next/image";
+"use client";
+import AnimatedHero from "@/components/landing/AnimateHero";
+import { useState, useEffect } from "react";
+import { gsap, Expo } from "gsap";
+import About from "@/components/landing/About";
+import ProjectsSection from "@/components/landing/Projects";
+import InteractiveList from "@/components/landing/InteractiveList";
+import ContactForm from "@/components/landing/ContactForm";
+import Footer from "@/components/landing/Footer";
+// import TechStackCube from "@/components/landing/TechStackCube";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [counter, setCounter] = useState(0);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    // Scroll to the top on component mount
+    window.scrollTo(0, 0);
+
+    const count = setInterval(() => {
+      setCounter((prevCounter) =>
+        prevCounter < 100
+          ? prevCounter + 1
+          : (clearInterval(count), setCounter(100), reveal())
+      );
+    }, 0);
+  }, []);
+
+  const reveal = () => {
+    // Disable scrolling
+    document.body.classList.add("overflow-hidden");
+
+    const t1 = gsap.timeline({
+      onComplete: () => {
+        console.log("Animation completed");
+        // Enable scrolling after animations
+        document.body.classList.remove("overflow-hidden");
+        // Remove the 'absolute' class after animation
+        document.querySelector(".content").classList.remove("absolute");
+        setIsAnimationComplete(true);
+      },
+    });
+    t1.to(".follow", {
+      width: "100%",
+      ease: Expo.easeInOut,
+      duration: 1.2,
+      delay: 0.7,
+    })
+      .to(".hide", { opacity: 0, duration: 0.3 })
+      .to(".hide", { display: "none", duration: 0.3 })
+      .to(".follow", {
+        height: "100%",
+        ease: Expo.easeInOut,
+        duration: 0.7,
+        delay: 0.5,
+      })
+      .to(".content", { width: "100%", ease: Expo.easeInOut, duration: 0.7 })
+      .to(".follow", { opacity: 0, duration: 0.3 })
+      .to(".title-lines", { display: "block", duration: 0.1 })
+      .to(".title-lines", {
+        opacity: 1,
+        stagger: 0.9,
+        ease: Expo.easeInOut,
+        duration: 0.6,
+      });
+  };
+  return (
+    <div className="w-screen h-screen relative bg-black text-white">
+      <div className="absolute inset-0 flex justify-center items-center">
+        <div className="absolute bg-gradient-to-r from-peenk to-purplee  h-[2px] left-0 follow"></div>
+
+        <div
+          className="absolute bg-white h-[2px] left-0 transition-all duration-400 hide"
+          style={{ width: `${counter}%` }}
+        ></div>
+        <p className="absolute text-[130px] font-medium text-white transform -translate-y-[15px] hide">
+          {counter}%
+        </p>
+      </div>
+
+      <div className="absolute inset-0 bg-black content w-0  text-white">
+        {isAnimationComplete && (
+          <div className="absolute inset-0  w-full h-full blur-2xl">
+            <div className="absolute top-24 left-1/2 transform -translate-x-1/2 md:left-24 md:transform-none w-56 h-56 bg-violet-600 rounded-full mix-blend-multiply opacity-70 animate-blob filter blur-3xl"></div>
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 md:bottom-2 md:left-auto md:right-1/4 md:transform-none w-56 h-56 bg-sky-600 rounded-full mix-blend-multiply opacity-70 animate-blob delay-1000 filter blur-3xl"></div>
+            <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 md:bottom-1/4 md:left-1/3 md:transform-none w-56 h-56 bg-pink-600 rounded-full mix-blend-multiply opacity-70 animate-blob delay-500 filter blur-3xl"></div>
+          </div>
+        )}
+        <div className="title-lines">
+          <AnimatedHero />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      {isAnimationComplete && (
+        <>
+          <div>
+            <About />
+          </div>
+          <div>
+            <ProjectsSection />
+          </div>
+          <div>
+            {/* <TechStackCube /> */}
+            <InteractiveList />
+          </div>
+          <div>
+            <ContactForm />
+          </div>
+          <div>
+            <Footer />
+          </div>
+        </>
+      )}
     </div>
   );
 }

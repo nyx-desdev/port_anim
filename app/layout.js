@@ -1,5 +1,10 @@
+import clsx from "clsx";
 import localFont from "next/font/local";
+import { Urbanist } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/landing/Navbar";
+
+const urbanist = Urbanist({ subsets: ["latin"] });
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,8 +26,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={clsx(urbanist.className, "relative min-h-screen")}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="top-0 z-50 mx-auto max-w-7xl md:sticky md:top-4">
+          {/* <NavBar /> */}
+        </header>
         {children}
       </body>
     </html>
